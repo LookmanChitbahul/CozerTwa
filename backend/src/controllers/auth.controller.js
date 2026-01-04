@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 
 export const signup = async (req, res) => { 
     const {fullName , email , password} = req.body;
-
+    //console.log(1)-for testing
     try {
         if(!fullName || !email || !password){
             return res.status(400).json({message: "All fields are required"});
@@ -19,9 +19,9 @@ export const signup = async (req, res) => {
             return res.status(400).json({message: "Please enter a valid email"});
         }
 
-        const user = await User.findOne({email});
-        if (user) return res.status(400).json({message: "Email already exists"});
-
+        const user = await User.findOne({ email });
+        if (user) return res.status(400).json({ message: "Email already exists" });
+        console.log(1)
         // this part is for password hashing using bcryptjs like 123456 turns in to "£$%^(% something like that"
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
