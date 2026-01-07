@@ -33,8 +33,15 @@ export const signup = async (req, res) => {
         });
         
         if (newUser){
-            generateToken(newUser._id, res)
-            await newUser.save();
+            //before CR
+            //generateToken(newUser._id, res)
+            //await newUser.save();
+        
+            //After CR
+            //persist first, then issue the auth cookie
+            const savedUser = await newUser.save();
+            generateToken(savedUser._id, res);
+
             res.status(201).json({
                 _id: newUser._id,
                 fullName: newUser.fullName,
@@ -50,3 +57,5 @@ export const signup = async (req, res) => {
         res.status(500).json({message: "Internal server error"});
     }
 };
+
+//for branching
