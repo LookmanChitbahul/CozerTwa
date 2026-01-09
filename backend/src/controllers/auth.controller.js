@@ -1,6 +1,8 @@
+import { sendWelcomeEmail } from "../emails/emailHandlers.js";
 import { generateToken } from '../lib/utils.js';
 import User from '../models/User.js';
 import bcrypt from 'bcryptjs';
+import {ENV} from '../lib/env.js';
 
 export const signup = async (req, res) => { 
     const {fullName , email , password} = req.body;
@@ -21,7 +23,6 @@ export const signup = async (req, res) => {
 
         const user = await User.findOne({ email });
         if (user) return res.status(400).json({ message: "Email already exists" });
-        console.log(1)
         // this part is for password hashing using bcryptjs like 123456 turns in to "£$%^(% something like that"
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
@@ -48,6 +49,13 @@ export const signup = async (req, res) => {
                 email: newUser.email,
                 prodilePic: newUser.profilePic,
             });
+
+            try {
+                await sendWelcomeEmail(savedUser.email, savedUser.fullName, ENV.CLIENT_URL);
+            } catch (error) {
+                console.error("Failed to send welcome email:", error);
+            }
+
         } else {
             return res.status(400).json({message: "Invalid user data"});
         }
