@@ -1,5 +1,5 @@
 import express from 'express';
-import dotenv from 'dotenv';
+import {ENV} from './lib/env.js';
 import path from 'path';
 
 import authRoutes from './routes/auth.route.js';
@@ -11,14 +11,14 @@ dotenv.config();
 const app = express();
 const __dirname = path.resolve();
 
-const PORT=(process.env.PORT);
+const PORT=(ENV.PORT);
 
 app.use(express.json()) //middleware it will be on req.body
 
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 
-if (process.env.NODE_ENV === 'production') {
+if (ENV.NODE_ENV === 'production') {
     app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
     app.get('*', (_, res) => {
